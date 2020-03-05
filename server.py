@@ -1,5 +1,10 @@
 import socket
 
+# hostname = socket.gethostname()    
+# IPAddr = socket.gethostbyname(hostname)    
+# print("Your Computer Name is: " + hostname)    
+# print("Your Computer IP Address is: " + IPAddr) 
+
 def server():
   host = socket.gethostname()   # get local machine name
   port = 50000  # Make sure it's within the > 1024 $$ <65535 range
@@ -13,6 +18,7 @@ def server():
   while True:
     data = client_socket.recv(1024).decode('utf-8')
     if not data:
+      print("close connect")
       break
     print('From online user: ' + data)
     data = data.upper()
