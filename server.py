@@ -32,7 +32,7 @@ topicList = {'topic1': ['ip1','ip2','ip3','ip4']}
 
 def send_message(client_socket, address):
   while True:
-    data = topicMsg[address(0)].pop(0)
+    data = topicMsg[address(0)].pop(0)      # nutcxzx
     data = client_socket.recv(1024).decode('utf-8')
     if not data:
       print("close connect")

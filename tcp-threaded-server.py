@@ -10,7 +10,7 @@ def handle_client(s):
       print('Client disconnected ...')
       break
     else:
-      txtout = txtin.upper()    
+      txtout = txtin.upper()
       s.send(txtout)
   s.close()
   return
@@ -18,9 +18,8 @@ def handle_client(s):
 def main():
     host = socket.gethostname()
     port = 50000
-    addr = (host, port)
     s = socket.socket()
-    s.bind(addr)
+    s.bind(host, port)
     s.listen(1)
     print ('TCP threaded server started ...')
 
@@ -35,7 +34,6 @@ def main():
       print("Cannot start thread..")
       import traceback
       trackback.print_exc()
-
   s.close()
 
 if __name__ == '__main__':
