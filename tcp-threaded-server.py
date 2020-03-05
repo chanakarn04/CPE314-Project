@@ -28,15 +28,14 @@ def main():
       sckt, addr = s.accept()
       ip, port = str(addr[0]), str(addr[1]) 
       print ('New client connected from ..' + ip + ':' + port)
-    
-    try:
-      Thread(target=handle_client, args=(sckt,)).start()
-    except:
-      print("Cannot start thread..")
-      import traceback
-      trackback.print_exc()
+      try:
+        Thread(target=handle_client, args=(sckt,)).start()
+      except:
+        print("Cannot start thread..")
+        import traceback
+        trackback.print_exc()
 
-  s.close()
+    s.close()
 
 if __name__ == '__main__':
   try:

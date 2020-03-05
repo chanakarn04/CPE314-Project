@@ -1,6 +1,8 @@
 import socket
 
 def client():
+  
+
   host = socket.gethostbyname('localhost')  # get local machine name
   port = 50000  # Make sure it's within the > 1024 $$ <65535 range
   print(host)

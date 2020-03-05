@@ -6,7 +6,7 @@ def mainRun():
     server = socket.socket()
     server.connect((host,port))
     data = input("input message :")
-
+    
         #receive & send data
     while data!='q':
         server.send(data.encode('utf-8'))
