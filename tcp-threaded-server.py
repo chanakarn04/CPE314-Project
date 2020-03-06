@@ -2,6 +2,8 @@ import socket
 from threading import Thread
 import os,sys
 
+import time
+
 topicMsg = {}
 # topicDict = {}
 
@@ -12,6 +14,24 @@ def splitfunction(text):
 def createQueue(topic):
   if topic not in topicMsg.keys():
     topicMsg[topic] = []
+
+def handle_disconnect(sckt):
+    print("test")
+    ready = select.select([sckt], [], [], 0.25)
+    if ready[0]:
+        txtin = sckt.recv(1024)
+        txt = txtin.decode('utf-8')
+    else:
+        txt = 'a'
+    
+    if txt == 'q':
+        print("ture")
+        time.sleep(5)
+        return True
+    else:
+        print("fasle")
+        time.sleep(0.5)
+        return False
   
 
 # def addToDict(topic,ip):
@@ -38,9 +58,9 @@ def handle_publisher(s, ip, topic, message):
       txtin = s.recv(1024)
       print ('Publisher> %s' %(txtin).decode('utf-8'))
       splitTxt = splitfunction(txtin.decode('utf-8')) 
-    try:
-      x = topicMsg[topic]
-    except KeyError:
+      try:
+        x = topicMsg[topic]
+      except KeyError:
         print("Topic does not exist")
     else:
       topicMsg[topic].append(message)
@@ -52,10 +72,14 @@ def handle_subscriber(s, topic, ip):
   createQueue(topic)
   print(topicMsg)
   print("This is subscriber")
-  while True:
+  cond = False
+  while not cond:
+    handle_disconnect(s)
+    print("TEST")
     if topicMsg[topic] != []:
       data = topicMsg[topic].pop()
       s.send(data.encode('utf-8'))
+  print('Client disconected ...')
   s.close()
 
 def handle_incoming_msg(sckt, address):
@@ -64,7 +88,13 @@ def handle_incoming_msg(sckt, address):
   while(not isHandle):
     txtin = sckt.recv(1024)
     splitTxt = splitfunction(txtin.decode('utf-8'))
-    if splitTxt[0] == "subscriber" :
+    
+    if splitTxt[0] == 'q':
+      print('Client disconected ...')
+      sckt.close()
+      break
+
+    elif splitTxt[0] == "subscriber" :
       isHandle = True
       handle_subscriber(sckt, splitTxt[2], address[0])
     elif splitTxt[0] == "publisher" :
