@@ -23,7 +23,6 @@ def client():
     except KeyboardInterrupt:
       print ('Interrupted ..')
       try:
-        print("message")
         message = 'q'
         s.send(message.encode('utf-8'))
         s.close()

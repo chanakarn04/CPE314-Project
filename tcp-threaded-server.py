@@ -13,7 +13,6 @@ def splitfunction(text):
   return x
 
 def handle_disconnect(sckt):
-    print("test")
     ready = select.select([sckt], [], [], 0.25)
     if ready[0]:
         txtin = sckt.recv(1024)
