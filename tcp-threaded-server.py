@@ -5,15 +5,11 @@ import os,sys
 import time
 
 topicMsg = {}
-# topicDict = {}
+topicDict = {}
 
 def splitfunction(text):
   x = text.split()
   return x
-
-def createQueue(topic):
-  if topic not in topicMsg.keys():
-    topicMsg[topic] = []
 
 def handle_disconnect(sckt):
     print("test")
@@ -32,58 +28,68 @@ def handle_disconnect(sckt):
         print("fasle")
         time.sleep(0.5)
         return False
+
+def createQueue(ip, port):
+  ipAndPort = str(ip) +":"+ str(port)
+  if ipAndPort not in topicMsg.keys():
+    topicMsg[ipAndPort] = []
   
 
-# def addToDict(topic,ip):
-#   print("add to dict")
-#   if topic in topicDict.keys():
-#       topicDict[topic].append(ip)
-#       print(topicDict)
-#   else:
-#       lst = [ip]
-#       topicDict[topic] = lst
-#       print(topicDict)
+def addToDict(topic, ip, port):
+  ipAndPort = str(ip) + ":" + str(port)
+  if topic in topicDict.keys():
+      topicDict[topic].append(ipAndPort)
+      print(topicDict)
+  else:
+      lst = [ipAndPort]
+      topicDict[topic] = lst
+      print(topicDict)
 
-# def send_message(client_socket, address):
-#   while True:
-#     data = topicMsg[address(0)].pop(0)
-#     client_socket.send(data.encode('utf-8'))
-#   client_socket.close()
+def send_message(client_socket, address):
+  while True:
+    data = topicMsg[address(0)].pop(0)
+    client_socket.send(data.encode('utf-8'))
+  client_socket.close()
 
-def handle_publisher(s, ip, topic, message):
+def handle_publisher(s, ip, topic, message, port):
   check = False
-  print("This is publisher")
+  ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
       txtin = s.recv(1024)
       print ('Publisher> %s' %(txtin).decode('utf-8'))
       splitTxt = splitfunction(txtin.decode('utf-8')) 
-      try:
-        x = topicMsg[topic]
-      except KeyError:
+      print(splitTxt)
+      topic = splitTxt[2]
+      message = splitTxt[3]
+    try:
+      subscriberList = topicDict[topic]
+    except KeyError:
         print("Topic does not exist")
     else:
-      topicMsg[topic].append(message)
-      print(topicMsg)
-      check = True
+      for queueTarget in subscriberList:
+        topicMsg[queueTarget].append(message)
+        print(topicMsg)
+        check = True
 
-def handle_subscriber(s, topic, ip):
-  # addToDict(topic, ip)
-  createQueue(topic)
+def handle_subscriber(s, topic, ip, port):
+  addToDict(topic, ip, port)
+  createQueue(ip, port)
+  ipAndPort = str(ip) + ":" + str(port)
   print(topicMsg)
   print("This is subscriber")
   cond = False
   while not cond:
-    handle_disconnect(s)
-    print("TEST")
-    if topicMsg[topic] != []:
-      data = topicMsg[topic].pop()
+    cond = handle_disconnect(s)
+    if topicMsg[ipAndPort] != []:
+      data = topicMsg[ipAndPort].pop(0)
+      print(data)
       s.send(data.encode('utf-8'))
+    
   print('Client disconected ...')
   s.close()
 
 def handle_incoming_msg(sckt, address):
-  createQueue(address[0])
   isHandle = False
   while(not isHandle):
     txtin = sckt.recv(1024)
@@ -96,10 +102,10 @@ def handle_incoming_msg(sckt, address):
 
     elif splitTxt[0] == "subscriber" :
       isHandle = True
-      handle_subscriber(sckt, splitTxt[2], address[0])
+      handle_subscriber(sckt, splitTxt[2], address[0], address[1])
     elif splitTxt[0] == "publisher" :
       isHandle = True      
-      handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3])
+      handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3], address[1])
     else:
       print("Syntax error")
 
@@ -116,7 +122,7 @@ def main():
   while True:
     sckt, addr = s.accept()
     ip, port = str(addr[0]), str(addr[1]) 
-    print ('New client connected from ..' + ip + ':' + port)
+    print ('New client connected from ..' + str(ip) + ":" + str(port))
     try:
       Thread(target=handle_incoming_msg, args=(sckt,addr,)).start()
     except:
