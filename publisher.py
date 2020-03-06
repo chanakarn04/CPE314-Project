@@ -19,5 +19,7 @@ def publish():
         if txtout == 'quit':
             break
 
+# publisher 127.0.0.1 room1 HelloWorld
 
-publish()
+if __name__ == "__main__":
+    publish()
