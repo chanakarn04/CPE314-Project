@@ -9,14 +9,12 @@ def splitfunction(text):
   x = text.split()
   return x
 
-def createQueue(ip, port):
-  ipAndPort = str(ip) +":"+ str(port)
+def createQueue(ipAndPort):
   if ipAndPort not in topicMsg.keys():
     topicMsg[ipAndPort] = []
   
 
-def addToDict(topic, ip, port):
-  ipAndPort = str(ip) + ":" + str(port)
+def addToDict(topic, ipAndPort):
   if topic in topicDict.keys():
       topicDict[topic].append(ipAndPort)
       print(topicDict)
@@ -38,7 +36,7 @@ def handle_publisher(s, ip, topic, message, port):
     if check:
       txtin = s.recv(1024)
       print ('Publisher> %s' %(txtin).decode('utf-8'))
-      splitTxt = splitfunction(txtin.decode('utf-8')) 
+      splitTxt = splitfunction(txtin.decode('utf-8'))
       print(splitTxt)
       topic = splitTxt[2]
       message = splitTxt[3]
@@ -53,9 +51,9 @@ def handle_publisher(s, ip, topic, message, port):
         check = True
 
 def handle_subscriber(s, topic, ip, port):
-  addToDict(topic, ip, port)
-  createQueue(ip, port)
   ipAndPort = str(ip) + ":" + str(port)
+  addToDict(topic, ipAndPort)
+  createQueue(ipAndPort)
   print(topicMsg)
   print("This is subscriber")
   while True:
