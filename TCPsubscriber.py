@@ -4,7 +4,7 @@ import time
 import sys, os
 
 def mainRun():
-    data = input("Subscriber IP:")
+    data = input("Subscriber IP: ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")

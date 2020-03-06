@@ -12,9 +12,7 @@ def publish():
     s.connect(addr)
     s.send(data.encode('utf-8'))
     while True:
-        print('Publisher>> ', end='')
-        sys.stdout.flush()
-        txtout = sys.stdin.readline().strip()
+        txtout = input("Publisher>> ")
         s.send(txtout.encode('utf-8'))
         if txtout == 'quit':
             break
