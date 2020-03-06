@@ -1,6 +1,8 @@
 import socket
 
 def client():
+  
+
   host = socket.gethostbyname('localhost')  # get local machine name
   port = 50000  # Make sure it's within the > 1024 $$ <65535 range
   print(host)
@@ -12,7 +14,7 @@ def client():
     s.send(message.encode('utf-8'))
     data = s.recv(1024).decode('utf-8')
     print('Received from server: ' + data)
-    message = input('==> ')
+    # message = input('==> ')
   s.close()
 
 if __name__ == '__main__':

@@ -1,43 +1,30 @@
-# Importing defaultdict 
-from collections import defaultdict 
-
+mydict = {} 
 def splitfunction(text):
     x = text.split()
-
     return x
 
 
 def addtodict(topic,ip):
-    #Create an empty dict
-    mydict = {} 
-
     if topic in mydict.keys():
-        print("in if")
         mydict[topic].append(ip)
     else:
-        print("in else")
-        mydict[topic] = ip
+        lst = [ip]
+        mydict[topic] = lst
 
-    
-    return mydict
-
-    
 #TestSplitFunction
 x1 = splitfunction("222.222.555 thisistopic")
 print("#TestSplitFunction")
 print(x1)
 
-
 #TestMydictFunction
 topic = "TestTopic"
 ip = '255.255.255'
 print("#TestMydictFunction1")
-mydict = addtodict(topic,ip)
+addtodict(topic,ip)
 print(mydict)
-
 print("#TestMydictFunction2")
-mydict = addtodict(topic,'555')
-mydict = addtodict("topic2",'999')
+addtodict(topic,'555')
+addtodict("topic2",'999')
 print(mydict)
 
 
