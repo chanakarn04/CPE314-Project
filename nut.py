@@ -2,6 +2,7 @@ topicMsg = {'ip1':[], 'ip2':[], 'ip3':[], 'ip4':[]}
 topicList = {'topic1': ['ip1','ip2','ip3','ip4']}
 
 def send_message(client_socket, address):
+  # send message back to subscriber
   while True:
     data = topicMsg[address(0)].pop(0)
     client_socket.send(data.encode('utf-8'))

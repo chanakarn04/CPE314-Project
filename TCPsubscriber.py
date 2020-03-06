@@ -1,7 +1,7 @@
 import socket
 
 def mainRun():
-    data = input("input message :")
+    data = input("Subscriber IP:")
     splitData = data.split()
     host = splitData[1]
     port = 50000

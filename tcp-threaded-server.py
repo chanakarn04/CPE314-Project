@@ -1,6 +1,9 @@
 import socket
 from threading import Thread
 import os,sys
+import select
+
+import time
 
 topicMsg = {}
 topicDict = {}
@@ -9,7 +12,26 @@ def splitfunction(text):
   x = text.split()
   return x
 
-def createQueue(ipAndPort):
+def handle_disconnect(sckt):
+    print("test")
+    ready = select.select([sckt], [], [], 0.25)
+    if ready[0]:
+        txtin = sckt.recv(1024)
+        txt = txtin.decode('utf-8')
+    else:
+        txt = 'a'
+    
+    if txt == 'q':
+        print("ture")
+        time.sleep(5)
+        return True
+    else:
+        print("fasle")
+        time.sleep(0.5)
+        return False
+
+def createQueue(ip, port):
+  ipAndPort = str(ip) +":"+ str(port)
   if ipAndPort not in topicMsg.keys():
     topicMsg[ipAndPort] = []
   
@@ -56,11 +78,15 @@ def handle_subscriber(s, topic, ip, port):
   createQueue(ipAndPort)
   print(topicMsg)
   print("This is subscriber")
-  while True:
+  cond = False
+  while not cond:
+    cond = handle_disconnect(s)
     if topicMsg[ipAndPort] != []:
       data = topicMsg[ipAndPort].pop(0)
       print(data)
       s.send(data.encode('utf-8'))
+    
+  print('Client disconected ...')
   s.close()
 
 def handle_incoming_msg(sckt, address):
@@ -68,7 +94,13 @@ def handle_incoming_msg(sckt, address):
   while(not isHandle):
     txtin = sckt.recv(1024)
     splitTxt = splitfunction(txtin.decode('utf-8'))
-    if splitTxt[0] == "subscriber" :
+    
+    if splitTxt[0] == 'q':
+      print('Client disconected ...')
+      sckt.close()
+      break
+
+    elif splitTxt[0] == "subscriber" :
       isHandle = True
       handle_subscriber(sckt, splitTxt[2], address[0], address[1])
     elif splitTxt[0] == "publisher" :
@@ -97,7 +129,6 @@ def main():
       print("Cannot start thread..")
       import traceback
       trackback.print_exc()
-
   s.close()
 
 if __name__ == '__main__':
