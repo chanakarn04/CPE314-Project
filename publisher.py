@@ -1,10 +1,9 @@
 import socket
-import sys
+import sys, os
 
 def publish():
-    MAX_BUF = 1024
     SERV_PORT = 50000
-    data = input("publisher IP: ")
+    data = input("publisher > ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")
@@ -12,26 +11,29 @@ def publish():
         host = splitData[1]
         addr = (host, SERV_PORT)
         s = socket.socket()
-        s.connect(addr)
+        try:
+            s.connect(addr)
+        except ConnectionError:
+            print("Connection Error")
+            return
         s.send(data.encode('utf-8'))
-        while True:
-            txtout = input("Publisher>>")
-            s.send(txtout.encode('utf-8'))
-            if txtout == 'q':
-                print("Bye ..")
-                break
-        # while True:
-        #     txtout = input("Publisher>> ")
-        #     s.send(txtout.encode('utf-8'))
-        #     if txtout == 'q':
-        #         print("Bye")
-        #         break
+        try:
+            while True:
+                txtout = input("publisher > ")
+                s.send(txtout.encode('utf-8'))
+                if txtout == 'q':
+                    print("Bye ..")
+                    break
+        except KeyboardInterrupt:
+            print ('Interrupted ..')
+            try:
+                message = 'q'
+                s.send(message.encode('utf-8'))
+                s.close()
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)
         s.close()
-
-
-# publisher 127.0.0.1 room1 HelloWorld
-
-# subscriber 127.0.0.1 room1
 
 if __name__ == "__main__":
     publish()

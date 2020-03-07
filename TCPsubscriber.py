@@ -3,23 +3,25 @@ import select
 import time
 import sys, os
 
-def mainRun():
-    data = input("Subscriber IP: ")
+def subscribe():
+    data = input("Server IP: ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")
     else:
         host = splitData[1]
         port = 50000
-        server = socket.socket()
-        server.connect((host,port))
-            # receive & send data
-        server.send(data.encode('utf-8'))
+        s = socket.socket()
+        try:
+            s.connect((host,port))
+        except ConnectionError:
+            return
+        s.send(data.encode('utf-8'))
         try:
             while True:
-                ready = select.select([server], [], [], 0.1)
+                ready = select.select([s], [], [], 0.1)
                 if ready[0]:
-                    data = server.recv(1024).decode('utf-8')
+                    data = s.recv(1024).decode('utf-8')
                     print("Data from publisher : " + data  )
                 else:
                     time.sleep(0.1)
@@ -28,11 +30,12 @@ def mainRun():
             print ('Interrupted ..')
             try:
                 message = 'q'
-                server.send(message.encode('utf-8'))
-                server.close()
+                s.send(message.encode('utf-8'))
+                s.close()
                 sys.exit(0)
             except SystemExit:
                 os._exit(0)
-        server.close()
+        s.close()
+
 if __name__ == "__main__":
-    mainRun() 
+    subscribe()
