@@ -49,15 +49,17 @@ def handle_publisher(s, ip, topic, message, port):
   cond = False
   
   ipAndPort = str(ip) + ":" + str(port)
-  while not cond:
-    cond = handle_disconnect(s)
+  while True:
     if check:
-      txtin = s.recv(1024)
-      print ('Publisher> %s' %(txtin).decode('utf-8'))
-      splitTxt = splitfunction(txtin.decode('utf-8'))
-      print(splitTxt)
-      topic = splitTxt[2]
-      message = splitTxt[3]
+        txtin = s.recv(1024)
+        if  handle_disconnect(s):
+          break
+        else:
+          print ('Publisher> %s' %(txtin).decode('utf-8'))
+          splitTxt = splitfunction(txtin.decode('utf-8'))
+          print(splitTxt)
+          topic = splitTxt[2]
+          message = splitTxt[3]
     try:
       subscriberList = topicDict[topic]
     except KeyError:
@@ -66,20 +68,21 @@ def handle_publisher(s, ip, topic, message, port):
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
         check = True
+  print('Publisher disconected ...')
+  s.close()
 
 def handle_subscriber(s, topic, ip, port):
   ipAndPort = str(ip) + ":" + str(port)
   addToDict(topic, ipAndPort)
   createQueue(ip, port)
   cond = False
-  while not cond:
+  while not cond :
     cond = handle_disconnect(s)
     if topicMsg[ipAndPort] != []:
       data = topicMsg[ipAndPort].pop(0)
       # print(data)
       s.send(data.encode('utf-8'))
-    
-  print('Client disconected ...')
+  print('Subscriber disconected ...')
   s.close()
 
 def handle_incoming_msg(sckt, address):

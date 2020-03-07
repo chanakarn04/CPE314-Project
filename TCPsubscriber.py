@@ -4,7 +4,7 @@ import time
 import sys, os
 
 def subscribe():
-    data = input("Server IP: ")
+    data = input("subscriber : ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")
