@@ -21,12 +21,12 @@ def handle_disconnect(sckt):
         txt = 'a'
     
     if txt == 'q':
-        print("ture")
-        time.sleep(5)
+        # print("ture")
+        # time.sleep(5)
         return True
     else:
-        print("fasle")
-        time.sleep(0.5)
+        # print("fasle")
+        # time.sleep(0.5)
         return False
 
 def createQueue(ip, port):
@@ -35,8 +35,7 @@ def createQueue(ip, port):
     topicMsg[ipAndPort] = []
   
 
-def addToDict(topic, ip, port):
-  ipAndPort = str(ip) + ":" + str(port)
+def addToDict(topic, ipAndPort):
   if topic in topicDict.keys():
       topicDict[topic].append(ipAndPort)
       print(topicDict)
@@ -58,10 +57,16 @@ def handle_publisher(s, ip, topic, message, port):
     if check:
       txtin = s.recv(1024)
       print ('Publisher> %s' %(txtin).decode('utf-8'))
-      splitTxt = splitfunction(txtin.decode('utf-8')) 
+      splitTxt = splitfunction(txtin.decode('utf-8'))
+      print(len(splitTxt))
       print(splitTxt)
-      topic = splitTxt[2]
-      message = splitTxt[3]
+      if splitTxt[0] == 'q':
+        break
+      elif len(splitTxt) == 4:
+        topic = splitTxt[2]
+        message = splitTxt[3]
+      else:
+        print("syntax errer")
     try:
       subscriberList = topicDict[topic]
     except KeyError:
@@ -71,11 +76,13 @@ def handle_publisher(s, ip, topic, message, port):
         topicMsg[queueTarget].append(message)
         print(topicMsg)
         check = True
+  print('Publisher disconected ...')
+  s.close()
 
 def handle_subscriber(s, topic, ip, port):
-  addToDict(topic, ip, port)
-  createQueue(ip, port)
   ipAndPort = str(ip) + ":" + str(port)
+  addToDict(topic, ipAndPort)
+  createQueue(ip, port)
   print(topicMsg)
   print("This is subscriber")
   cond = False
@@ -86,7 +93,7 @@ def handle_subscriber(s, topic, ip, port):
       print(data)
       s.send(data.encode('utf-8'))
     
-  print('Client disconected ...')
+  print('Subscriber disconected ...')
   s.close()
 
 def handle_incoming_msg(sckt, address):
@@ -94,16 +101,14 @@ def handle_incoming_msg(sckt, address):
   while(not isHandle):
     txtin = sckt.recv(1024)
     splitTxt = splitfunction(txtin.decode('utf-8'))
-    
     if splitTxt[0] == 'q':
       print('Client disconected ...')
       sckt.close()
       break
-
-    elif splitTxt[0] == "subscriber" :
+    elif splitTxt[0] == "subscriber" and len(splitTxt) == 3:
       isHandle = True
       handle_subscriber(sckt, splitTxt[2], address[0], address[1])
-    elif splitTxt[0] == "publisher" :
+    elif splitTxt[0] == "publisher" and len(splitTxt) == 4:
       isHandle = True      
       handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3], address[1])
     else:

@@ -4,7 +4,7 @@ import time
 import sys, os
 
 def mainRun():
-    data = input("input message :")
+    data = input("Subscriber IP: ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")
@@ -33,8 +33,6 @@ def mainRun():
                 sys.exit(0)
             except SystemExit:
                 os._exit(0)
-        
-        
         server.close()
 if __name__ == "__main__":
     mainRun() 
