@@ -21,11 +21,9 @@ def handle_disconnect(sckt):
         txt = 'a'
     
     if txt == 'q':
-        # print("ture")
         time.sleep(5)
         return True
     else:
-        # print("fasle")
         time.sleep(0.5)
         return False
 
@@ -38,11 +36,9 @@ def createQueue(ip, port):
 def addToDict(topic, ipAndPort):
   if topic in topicDict.keys():
       topicDict[topic].append(ipAndPort)
-      # print(topicDict)
   else:
       lst = [ipAndPort]
       topicDict[topic] = lst
-      # print(topicDict)
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
@@ -83,7 +79,6 @@ def handle_subscriber(s, topic, ip, port):
     cond = handle_disconnect(s)
     if topicMsg[ipAndPort] != []:
       data = topicMsg[ipAndPort].pop(0)
-      # print(data)
       s.send(data.encode('utf-8'))
     
   print('Subscriber disconected ...')
@@ -110,8 +105,6 @@ def handle_incoming_msg(sckt, address):
       print("Syntax error")
 
 def main():
-  # host = socket.gethostname()
-
   host = socket.gethostbyname('localhost')
   port = 50000
   addr = (host, port)
