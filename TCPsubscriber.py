@@ -3,7 +3,7 @@ import select
 import time
 import sys, os
 
-def mainRun():
+def subscribe():
     data = input("Subscriber IP: ")
     splitData = data.split()
     if splitData[0] == 'q':
@@ -36,4 +36,4 @@ def mainRun():
         s.close()
 
 if __name__ == "__main__":
-    mainRun() 
+    subscribe()
