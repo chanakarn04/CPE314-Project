@@ -51,15 +51,18 @@ def handle_publisher(s, ip, topic, message, port):
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
-        txtin = s.recv(1024)
-        if  handle_disconnect(s):
-          break
-        else:
-          print ('Publisher> %s' %(txtin).decode('utf-8'))
-          splitTxt = splitfunction(txtin.decode('utf-8'))
-          print(splitTxt)
-          topic = splitTxt[2]
-          message = splitTxt[3]
+      txtin = s.recv(1024)
+      print ('Publisher> %s' %(txtin).decode('utf-8'))
+      splitTxt = splitfunction(txtin.decode('utf-8'))
+      print(len(splitTxt))
+      print(splitTxt)
+      if splitTxt[0] == 'q':
+        break
+      elif len(splitTxt) == 4:
+        topic = splitTxt[2]
+        message = splitTxt[3]
+      else:
+        print("syntax errer")
     try:
       subscriberList = topicDict[topic]
     except KeyError:
@@ -82,6 +85,7 @@ def handle_subscriber(s, topic, ip, port):
       data = topicMsg[ipAndPort].pop(0)
       # print(data)
       s.send(data.encode('utf-8'))
+    
   print('Subscriber disconected ...')
   s.close()
 
@@ -96,11 +100,11 @@ def handle_incoming_msg(sckt, address):
       sckt.close()
       print("Number of active child thread(s): " + str(activeCount() - 2))
       break
-    elif splitTxt[0] == "subscribe" :
+    elif splitTxt[0] == "subscriber" and len(splitTxt) == 3:
       isHandle = True
       handle_subscriber(sckt, splitTxt[2], address[0], address[1])
-    elif splitTxt[0] == "publish" :
-      isHandle = True
+    elif splitTxt[0] == "publisher" and len(splitTxt) == 4:
+      isHandle = True      
       handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3], address[1])
     else:
       print("Syntax error")
