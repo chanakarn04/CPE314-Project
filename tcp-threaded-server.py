@@ -27,6 +27,8 @@ def handle_disconnect(sckt):
         time.sleep(0.5)
         return False
 
+
+
 def createQueue(ip, port):
   ipAndPort = str(ip) +":"+ str(port)
   if ipAndPort not in topicMsg.keys():
@@ -40,6 +42,16 @@ def addToDict(topic, ipAndPort):
       lst = [ipAndPort]
       topicDict[topic] = lst
 
+def checkKey(dict, key): 
+      
+    if key in dict.keys(): 
+        return True
+    else: 
+        return False
+
+# def rmTopicDict(topic, ipAndPort):
+
+
 def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
@@ -47,6 +59,7 @@ def handle_publisher(s, ip, topic, message, port):
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
+      print("\n\t===> if\n")
       txtin = s.recv(1024)
       splitTxt = splitfunction(txtin.decode('utf-8'))
       if splitTxt[0] == 'q':
@@ -62,9 +75,22 @@ def handle_publisher(s, ip, topic, message, port):
     except KeyError:
         print("Topic does not exist")
     else:
+      print("\n\t===> else\n")
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
         check = True
+
+    # else:
+    #   if checkKey(topicDict, topic):
+    #     subscriberList = topicDict[topic]
+    #     for queueTarget in subscriberList:
+    #       topicMsg[queueTarget].append(message)
+    #       check = True
+    #   else:
+    #     print("Topic does not exist")
+    #     check = True
+      
+
   print('Publisher disconected ...')
   s.close()
 
