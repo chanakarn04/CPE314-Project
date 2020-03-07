@@ -48,13 +48,14 @@ def handle_publisher(s, ip, topic, message, port):
   while True:
     if check:
       txtin = s.recv(1024)
-      print ('Publisher> %s' %(txtin).decode('utf-8'))
+      # print ('Publisher> %s' %(txtin).decode('utf-8'))
       splitTxt = splitfunction(txtin.decode('utf-8'))
-      print(len(splitTxt))
-      print(splitTxt)
+      # print(len(splitTxt))
+      # print(splitTxt)
       if splitTxt[0] == 'q':
         break
       elif len(splitTxt) == 4:
+        print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
         topic = splitTxt[2]
         message = splitTxt[3]
       else:
@@ -97,9 +98,11 @@ def handle_incoming_msg(sckt, address):
       break
     elif splitTxt[0] == "subscriber" and len(splitTxt) == 3:
       isHandle = True
+      print(" ==> New subscriber has subscribe in topic : " + str(splitTxt[2]))
       handle_subscriber(sckt, splitTxt[2], address[0], address[1])
     elif splitTxt[0] == "publisher" and len(splitTxt) == 4:
-      isHandle = True      
+      isHandle = True
+      print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
       handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3], address[1])
     else:
       print("Syntax error")
