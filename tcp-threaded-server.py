@@ -65,15 +65,12 @@ def handle_publisher(s, ip, topic, message, port):
     else:
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
-        # print(topicMsg)
         check = True
 
 def handle_subscriber(s, topic, ip, port):
   ipAndPort = str(ip) + ":" + str(port)
   addToDict(topic, ipAndPort)
   createQueue(ip, port)
-  # print(topicMsg)
-  # print("This is subscriber")
   cond = False
   while not cond:
     cond = handle_disconnect(s)

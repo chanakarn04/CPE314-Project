@@ -9,10 +9,14 @@ def subscribe():
     if splitData[0] == 'q':
         print("Bye ..")
     else:
-        host = splitData[0]
+        host = splitData[1]
         port = 50000
         s = socket.socket()
-        s.connect((host,port))
+        try:
+            s.connect((host,port))
+        except ConnectionError:
+            return
+        s.send(data.encode('utf-8'))
         try:
             while True:
                 ready = select.select([s], [], [], 0.1)

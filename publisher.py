@@ -3,12 +3,17 @@ import sys, os
 
 def publish():
     SERV_PORT = 50000
-    data = input("Server IP: ")
+    data = input("publisher > ")
     splitData = data.split()
-    host = splitData[0]
+    host = splitData[1]
     addr = (host, SERV_PORT)
     s = socket.socket()
-    s.connect(addr)
+    s.send(data.encode('utf-8'))
+    try:
+        s.connect(addr)
+    except ConnectionError:
+        print("Connection Error")
+        return
     try:
         while True:
             txtout = input("publisher > ")
