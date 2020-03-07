@@ -4,17 +4,15 @@ import time
 import sys, os
 
 def subscribe():
-    data = input("Subscriber IP: ")
+    data = input("Server IP: ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")
     else:
-        host = splitData[1]
+        host = splitData[0]
         port = 50000
         s = socket.socket()
         s.connect((host,port))
-            # receive & send data
-        s.send(data.encode('utf-8'))
         try:
             while True:
                 ready = select.select([s], [], [], 0.1)

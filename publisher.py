@@ -3,13 +3,12 @@ import sys, os
 
 def publish():
     SERV_PORT = 50000
-    data = input("publisher IP: ")
+    data = input("Server IP: ")
     splitData = data.split()
-    host = splitData[1]
+    host = splitData[0]
     addr = (host, SERV_PORT)
     s = socket.socket()
     s.connect(addr)
-    s.send(data.encode('utf-8'))
     try:
         while True:
             txtout = input("Publisher>> ")
