@@ -2,7 +2,6 @@ import socket
 import sys
 
 def publish():
-    MAX_BUF = 1024
     SERV_PORT = 50000
     data = input("publisher IP: ")
     splitData = data.split()
