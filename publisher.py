@@ -8,12 +8,12 @@ def publish():
     host = splitData[1]
     addr = (host, SERV_PORT)
     s = socket.socket()
-    s.send(data.encode('utf-8'))
     try:
         s.connect(addr)
     except ConnectionError:
         print("Connection Error")
         return
+    s.send(data.encode('utf-8'))
     try:
         while True:
             txtout = input("publisher > ")
