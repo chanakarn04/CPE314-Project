@@ -3,7 +3,7 @@ import sys, os
 
 def publish():
     SERV_PORT = 50000
-    data = input("publisher IP: ")
+    data = input("publisher > ")
     splitData = data.split()
     host = splitData[1]
     addr = (host, SERV_PORT)
@@ -12,7 +12,7 @@ def publish():
     s.send(data.encode('utf-8'))
     try:
         while True:
-            txtout = input("Publisher>> ")
+            txtout = input("publisher > ")
             s.send(txtout.encode('utf-8'))
             if txtout == 'q':
                 break
