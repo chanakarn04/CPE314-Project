@@ -21,11 +21,11 @@ def handle_disconnect(sckt):
         txt = 'a'
     
     if txt == 'q':
-        print("ture")
+        # print("ture")
         time.sleep(5)
         return True
     else:
-        print("fasle")
+        # print("fasle")
         time.sleep(0.5)
         return False
 
@@ -38,22 +38,19 @@ def createQueue(ip, port):
 def addToDict(topic, ipAndPort):
   if topic in topicDict.keys():
       topicDict[topic].append(ipAndPort)
-      print(topicDict)
+      # print(topicDict)
   else:
       lst = [ipAndPort]
       topicDict[topic] = lst
-      print(topicDict)
-
-def send_message(client_socket, address):
-  while True:
-    data = topicMsg[address(0)].pop(0)
-    client_socket.send(data.encode('utf-8'))
-  client_socket.close()
+      # print(topicDict)
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
+  cond = False
+  
   ipAndPort = str(ip) + ":" + str(port)
-  while True:
+  while not cond:
+    cond = handle_disconnect(s)
     if check:
       txtin = s.recv(1024)
       print ('Publisher> %s' %(txtin).decode('utf-8'))
@@ -68,21 +65,21 @@ def handle_publisher(s, ip, topic, message, port):
     else:
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
-        print(topicMsg)
+        # print(topicMsg)
         check = True
 
 def handle_subscriber(s, topic, ip, port):
   ipAndPort = str(ip) + ":" + str(port)
   addToDict(topic, ipAndPort)
-  createQueue(ipAndPort)
-  print(topicMsg)
-  print("This is subscriber")
+  createQueue(ip, port)
+  # print(topicMsg)
+  # print("This is subscriber")
   cond = False
   while not cond:
     cond = handle_disconnect(s)
     if topicMsg[ipAndPort] != []:
       data = topicMsg[ipAndPort].pop(0)
-      print(data)
+      # print(data)
       s.send(data.encode('utf-8'))
     
   print('Client disconected ...')

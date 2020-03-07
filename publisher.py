@@ -11,7 +11,7 @@ def publish():
     s.connect(addr)
     try:
         while True:
-            txtout = input("Publisher>> ")
+            txtout = input("publisher > ")
             s.send(txtout.encode('utf-8'))
             if txtout == 'q':
                 break
