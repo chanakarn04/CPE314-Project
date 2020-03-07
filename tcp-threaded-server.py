@@ -48,10 +48,7 @@ def handle_publisher(s, ip, topic, message, port):
   while True:
     if check:
       txtin = s.recv(1024)
-      # print ('Publisher> %s' %(txtin).decode('utf-8'))
       splitTxt = splitfunction(txtin.decode('utf-8'))
-      # print(len(splitTxt))
-      # print(splitTxt)
       if splitTxt[0] == 'q':
         break
       elif len(splitTxt) == 4:
