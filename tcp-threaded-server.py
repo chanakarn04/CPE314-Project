@@ -59,6 +59,7 @@ def rmQueueKey(ipAndPort):
 def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
+  isSyntaxError = False
   
   ipAndPort = str(ip) + ":" + str(port)
   while True:
@@ -72,16 +73,19 @@ def handle_publisher(s, ip, topic, message, port):
         topic = splitTxt[2]
         message = splitTxt[3]
       else:
+        isSyntaxError = True
         print("syntax errer")
-    try:
-      subscriberList = topicDict[topic]
-    except KeyError:
-        print("Topic does not exist")
-        check = True
-    else:
-      for queueTarget in subscriberList:
-        topicMsg[queueTarget].append(message)
-        check = True
+    if not isSyntaxError:
+      try:
+        subscriberList = topicDict[topic]
+      except KeyError:
+          print("Topic does not exist")
+          check = True
+      else:
+        for queueTarget in subscriberList:
+          topicMsg[queueTarget].append(message)
+          check = True
+    isSyntaxError = False
   print('Publisher disconected ...')
   s.close()
 
