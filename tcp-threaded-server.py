@@ -58,6 +58,9 @@ def rmQueueKey(ipAndPort):
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
+  cond = False
+  isSyntaxError = False
+  
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
@@ -70,16 +73,19 @@ def handle_publisher(s, ip, topic, message, port):
         topic = splitTxt[2]
         message = splitTxt[3]
       else:
+        isSyntaxError = True
         print("syntax errer")
-    try:
-      subscriberList = topicDict[topic]
-    except KeyError:
-        print("Topic does not exist")
-        check = True
-    else:
-      for queueTarget in subscriberList:
-        topicMsg[queueTarget].append(message)
-        check = True
+    if not isSyntaxError:
+      try:
+        subscriberList = topicDict[topic]
+      except KeyError:
+          print("Topic does not exist")
+          check = True
+      else:
+        for queueTarget in subscriberList:
+          topicMsg[queueTarget].append(message)
+          check = True
+    isSyntaxError = False
   print('Publisher disconected ...')
   s.close()
 
@@ -109,11 +115,11 @@ def handle_incoming_msg(sckt, address):
       sckt.close()
       print("Number of active child thread(s): " + str(activeCount() - 2))
       break
-    elif splitTxt[0] == "subscriber" and len(splitTxt) == 3:
+    elif splitTxt[0] == "subscribe" and len(splitTxt) == 3:
       isHandle = True
       print(" ==> New subscriber has subscribe in topic : " + str(splitTxt[2]))
       handle_subscriber(sckt, splitTxt[2], address[0], address[1])
-    elif splitTxt[0] == "publisher" and len(splitTxt) == 4:
+    elif splitTxt[0] == "publish" and len(splitTxt) == 4:
       isHandle = True
       print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
       handle_publisher(sckt, address[0], splitTxt[2], splitTxt[3], address[1])

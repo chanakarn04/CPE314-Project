@@ -19,7 +19,7 @@ def publish():
         s.send(data.encode('utf-8'))
         try:
             while True:
-                txtout = input("publisher > ")
+                txtout = input("publisher> ")
                 s.send(txtout.encode('utf-8'))
                 if txtout == 'q':
                     print("Bye ..")
