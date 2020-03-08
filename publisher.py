@@ -28,7 +28,7 @@ def publish():
         s.send(data.encode('utf-8'))
         try:
             while True:
-                t = threading.Timer(15, close_connect, [s])
+                t = threading.Timer(60, close_connect, [s])
                 t.start()
                 check = True
                 txtout = input("publisher> ")
