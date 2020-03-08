@@ -1,0 +1,13 @@
+5 steps to run the program:
+
+1. Open broker.py
+2. Open subscriber.py
+3. Open publisher.py
+4. In subscriber.py send " subscribe <broker_ip> <topic_name> "
+5. In publisher.py send " publish <broker_ip> <topic_name> <data_to_publish> "
+
+Addition: You can add more window of subscriber and publisher 
+
+ps1. subscriber will be terminated if there is no response within 60 seconds.
+ps2. publisher will be terminated if it not send data to broker within 60 seconds.
+

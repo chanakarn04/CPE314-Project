@@ -3,7 +3,7 @@ import select
 import time
 import sys, os
 
-TIME_OUT = 60
+TIME_OUT = 200
 
 def subscribe():
     data = input("subscriber> ")
