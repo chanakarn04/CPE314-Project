@@ -6,7 +6,7 @@ import sys, os
 TIME_OUT = 10
 
 def subscribe():
-    data = input("subscriber : ")
+    data = input("subscriber> ")
     splitData = data.split()
     startTime = time.time()
     if splitData[0] == 'q':
