@@ -26,10 +26,11 @@ def publish():
             print("Connection Error")
             return
         s.send(data.encode('utf-8'))
-        t = threading.Timer(1, close_connect, [s])
         try:
             while True:
+                t = threading.Timer(15, close_connect, [s])
                 t.start()
+                check = True
                 txtout = input("publisher> ")
                 t.cancel()
                 s.send(txtout.encode('utf-8'))

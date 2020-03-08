@@ -64,11 +64,7 @@ def handle_publisher(s, ip, topic, message, port):
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
-      s.settimeout(10)
-      try:
-        txtin = s.recv(1024)
-      except socket.timeout:
-        break
+      txtin = s.recv(1024)
       splitTxt = splitfunction(txtin.decode('utf-8'))
       if splitTxt[0] == 'q':
         break
