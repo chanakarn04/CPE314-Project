@@ -59,50 +59,38 @@ def rmQueueKey(ipAndPort):
 def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
-<<<<<<< HEAD
-  startTime = time.time()
-=======
   isSyntaxError = False
-  
->>>>>>> 0f9d0eb4c01f48dd39f6b580470f4a4a0ed0a30d
+  startTime = time.time()
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if time.time() - startTime > TIME_OUT :
       break
     if check:
-      txtin = s.recv(1024)
-      startTime = time.time()
-      splitTxt = splitfunction(txtin.decode('utf-8'))
-      if splitTxt[0] == 'q':
-        break
-      elif len(splitTxt) == 4:
-        print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
-        topic = splitTxt[2]
-        message = splitTxt[3]
-      else:
-        isSyntaxError = True
-        print("syntax errer")
-<<<<<<< HEAD
-=======
-    if not isSyntaxError:
->>>>>>> 0f9d0eb4c01f48dd39f6b580470f4a4a0ed0a30d
-      try:
-        subscriberList = topicDict[topic]
-      except KeyError:
-          print("Topic does not exist")
-          check = True
-<<<<<<< HEAD
-    else:
-      for queueTarget in subscriberList:
-        topicMsg[queueTarget].append(message)
-        check = True
-=======
-      else:
-        for queueTarget in subscriberList:
-          topicMsg[queueTarget].append(message)
-          check = True
+      ready = select.select([s], [], [], 0.1)
+      if ready[0]:
+        txtin = s.recv(1024)
+        startTime = time.time()
+        splitTxt = splitfunction(txtin.decode('utf-8'))
+        if splitTxt[0] == 'q':
+          break
+        elif len(splitTxt) == 4:
+          print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
+          topic = splitTxt[2]
+          message = splitTxt[3]
+        else:
+          isSyntaxError = True
+          print("syntax errer")
+        if not isSyntaxError:
+          try:
+            subscriberList = topicDict[topic]
+          except KeyError:
+              print("Topic does not exist")
+              check = True
+          else:
+            for queueTarget in subscriberList:
+              topicMsg[queueTarget].append(message)
+              check = True
     isSyntaxError = False
->>>>>>> 0f9d0eb4c01f48dd39f6b580470f4a4a0ed0a30d
   print('Publisher disconected ...')
   s.close()
 
