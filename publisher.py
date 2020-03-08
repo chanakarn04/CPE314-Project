@@ -3,7 +3,7 @@ import sys, os
 
 def publish():
     SERV_PORT = 50000
-    data = input("publisher > ")
+    data = input("publisher> ")
     splitData = data.split()
     if splitData[0] == 'q':
         print("Bye ..")

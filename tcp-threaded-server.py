@@ -2,9 +2,9 @@ import socket
 from threading import Thread, activeCount
 import os,sys
 import select
-
 import time
 
+TIME_OUT = 5
 topicMsg = {}
 topicDict = {}
 
@@ -60,31 +60,36 @@ def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
   isSyntaxError = False
-  
+  startTime = time.time()
   ipAndPort = str(ip) + ":" + str(port)
   while True:
+    if time.time() - startTime > TIME_OUT :
+      break
     if check:
-      txtin = s.recv(1024)
-      splitTxt = splitfunction(txtin.decode('utf-8'))
-      if splitTxt[0] == 'q':
-        break
-      elif len(splitTxt) == 4:
-        print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
-        topic = splitTxt[2]
-        message = splitTxt[3]
-      else:
-        isSyntaxError = True
-        print("syntax errer")
-    if not isSyntaxError:
-      try:
-        subscriberList = topicDict[topic]
-      except KeyError:
-          print("Topic does not exist")
-          check = True
-      else:
-        for queueTarget in subscriberList:
-          topicMsg[queueTarget].append(message)
-          check = True
+      ready = select.select([s], [], [], 0.1)
+      if ready[0]:
+        txtin = s.recv(1024)
+        startTime = time.time()
+        splitTxt = splitfunction(txtin.decode('utf-8'))
+        if splitTxt[0] == 'q':
+          break
+        elif len(splitTxt) == 4:
+          print(" ==> Publisher has pulish in topic : " + str(splitTxt[2]) + ".\n ==>\tmessage : " + splitTxt[3])
+          topic = splitTxt[2]
+          message = splitTxt[3]
+        else:
+          isSyntaxError = True
+          print("syntax errer")
+        if not isSyntaxError:
+          try:
+            subscriberList = topicDict[topic]
+          except KeyError:
+              print("Topic does not exist")
+              check = True
+          else:
+            for queueTarget in subscriberList:
+              topicMsg[queueTarget].append(message)
+              check = True
     isSyntaxError = False
   print('Publisher disconected ...')
   s.close()
