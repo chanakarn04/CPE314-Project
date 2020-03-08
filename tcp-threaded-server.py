@@ -60,7 +60,6 @@ def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
   isSyntaxError = False
-  
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
