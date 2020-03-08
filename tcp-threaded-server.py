@@ -2,9 +2,9 @@ import socket
 from threading import Thread, activeCount
 import os,sys
 import select
-
 import time
 
+TIME_OUT = 5
 topicMsg = {}
 topicDict = {}
 
@@ -59,11 +59,14 @@ def rmQueueKey(ipAndPort):
 def handle_publisher(s, ip, topic, message, port):
   check = False
   cond = False
-  
+  startTime = time.time()
   ipAndPort = str(ip) + ":" + str(port)
   while True:
+    if time.time() - startTime > TIME_OUT :
+      break
     if check:
       txtin = s.recv(1024)
+      startTime = time.time()
       splitTxt = splitfunction(txtin.decode('utf-8'))
       if splitTxt[0] == 'q':
         break
@@ -73,11 +76,11 @@ def handle_publisher(s, ip, topic, message, port):
         message = splitTxt[3]
       else:
         print("syntax errer")
-    try:
-      subscriberList = topicDict[topic]
-    except KeyError:
-        print("Topic does not exist")
-        check = True
+      try:
+        subscriberList = topicDict[topic]
+      except KeyError:
+          print("Topic does not exist")
+          check = True
     else:
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
