@@ -63,7 +63,7 @@ def handle_publisher(s, ip, topic, message, port):
   startTime = time.time()
   ipAndPort = str(ip) + ":" + str(port)
   while True:
-    if time.time() - startTime > TIME_OUT :
+    if time.time() - startTime > 5:
       break
     if check:
       ready = select.select([s], [], [], 0.1)

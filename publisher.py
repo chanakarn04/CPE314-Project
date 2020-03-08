@@ -1,5 +1,6 @@
 import socket
 import sys, os
+from threading import Timer
 
 def publish():
     SERV_PORT = 50000
@@ -19,7 +20,10 @@ def publish():
         s.send(data.encode('utf-8'))
         try:
             while True:
+                t = Timer(, print, ['Close connect from broker'])
+                t.start()
                 txtout = input("publisher> ")
+                t.cancle()
                 s.send(txtout.encode('utf-8'))
                 if txtout == 'q':
                     print("Bye ..")
