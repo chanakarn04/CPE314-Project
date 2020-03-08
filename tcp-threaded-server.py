@@ -58,8 +58,6 @@ def rmQueueKey(ipAndPort):
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
-  cond = False
-  
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
