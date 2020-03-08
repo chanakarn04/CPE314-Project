@@ -16,44 +16,50 @@ def handle_disconnect(sckt):
     ready = select.select([sckt], [], [], 0.25)
     if ready[0]:
         txtin = sckt.recv(1024)
-        txt = txtin.decode('utf-8').strip()
+        txt = txtin.decode('utf-8')
     else:
         txt = 'a'
     
     if txt == 'q':
-        time.sleep(5)
+        time.sleep(0.5)
         return True
     else:
         time.sleep(0.5)
         return False
-
-
 
 def createQueue(ip, port):
   ipAndPort = str(ip) +":"+ str(port)
   if ipAndPort not in topicMsg.keys():
     topicMsg[ipAndPort] = []
   
-
 def addToDict(topic, ipAndPort):
   if topic in topicDict.keys():
-      topicDict[topic].append(ipAndPort)
+    topicDict[topic].append(ipAndPort)
   else:
-      lst = [ipAndPort]
-      topicDict[topic] = lst
+    lst = [ipAndPort]
+    topicDict[topic] = lst
 
-def checkKey(dict, key): 
-      
+def checkKey(dict, key):   
     if key in dict.keys(): 
         return True
     else: 
         return False
 
-# def rmTopicDict(topic, ipAndPort):
+def rmTopicDict(topic, ipAndPort):
+  if len(topicDict[topic]) == 1:
+    del topicDict[topic]
+  else:
+    topicDict[topic].remove(ipAndPort)
 
+def rmQueueKey(ipAndPort):
+  while (topicMsg[ipAndPort] != []):
+    pass
+  del topicMsg[ipAndPort]
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
+  cond = False
+  
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
@@ -76,8 +82,6 @@ def handle_publisher(s, ip, topic, message, port):
       for queueTarget in subscriberList:
         topicMsg[queueTarget].append(message)
         check = True
-      
-
   print('Publisher disconected ...')
   s.close()
 
@@ -91,7 +95,8 @@ def handle_subscriber(s, topic, ip, port):
     if topicMsg[ipAndPort] != []:
       data = topicMsg[ipAndPort].pop(0)
       s.send(data.encode('utf-8'))
-    
+  rmTopicDict(topic, ipAndPort)
+  rmQueueKey(ipAndPort)
   print('Subscriber disconected ...')
   s.close()
 
@@ -127,7 +132,8 @@ def main():
   print('TCP threaded server started ...')
   while True:
     sckt, addr = s.accept()
-    print("New client connected from ... " + str(addr[0]) + ":" + str(addr[1]))
+    ip, port = str(addr[0]), str(addr[1]) 
+    print("New client connected from ... " + str(ip) + ":" + str(port))
     try:
       Thread(target=handle_incoming_msg, args=(sckt,addr,)).start()
     except:
