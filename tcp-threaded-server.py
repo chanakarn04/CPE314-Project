@@ -16,7 +16,7 @@ def handle_disconnect(sckt):
     ready = select.select([sckt], [], [], 0.25)
     if ready[0]:
         txtin = sckt.recv(1024)
-        txt = txtin.decode('utf-8')
+        txt = txtin.decode('utf-8').strip()
     else:
         txt = 'a'
     
@@ -54,8 +54,6 @@ def checkKey(dict, key):
 
 def handle_publisher(s, ip, topic, message, port):
   check = False
-  cond = False
-  
   ipAndPort = str(ip) + ":" + str(port)
   while True:
     if check:
