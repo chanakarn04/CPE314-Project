@@ -26,12 +26,13 @@ def publish():
             print("Connection Error")
             return
         s.send(data.encode('utf-8'))
-        t = threading.Timer(1, close_connect, [s])
+        t = threading.Timer(60, close_connect, [s])
         try:
             while True:
                 t.start()
                 txtout = input("publisher> ")
-                t.cancel()
+                print("thread cancel")
+                t.join()
                 s.send(txtout.encode('utf-8'))
                 if txtout == 'q':
                     print("Bye ..")
