@@ -31,7 +31,7 @@ def publish():
             while True:
                 t.start()
                 txtout = input("publisher> ")
-                t.cancle()
+                t.cancel()
                 s.send(txtout.encode('utf-8'))
                 if txtout == 'q':
                     print("Bye ..")

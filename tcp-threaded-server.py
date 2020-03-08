@@ -4,7 +4,7 @@ import os,sys
 import select
 import time
 
-TIME_OUT = 200
+TIME_OUT = 10
 topicMsg = {}
 topicDict = {}
 
@@ -63,14 +63,12 @@ def handle_publisher(s, ip, topic, message, port):
   startTime = time.time()
   ipAndPort = str(ip) + ":" + str(port)
   while True:
-    if time.time() - startTime > 10:
-      print("something")
-      break
     if check:
-      # ready = select.select([s], [], [], 0.1)
-      # if ready[0]:
-      txtin = s.recv(1024)
-      startTime = time.time()
+      s.settimeout(10)
+      try:
+        txtin = s.recv(1024)
+      except socket.timeout:
+        break
       splitTxt = splitfunction(txtin.decode('utf-8'))
       if splitTxt[0] == 'q':
         break
