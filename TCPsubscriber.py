@@ -15,6 +15,7 @@ def subscribe():
         try:
             s.connect((host,port))
         except ConnectionError:
+            print("Connection Error")
             return
         s.send(data.encode('utf-8'))
         try:
