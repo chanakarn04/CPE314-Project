@@ -129,8 +129,7 @@ def main():
   print('TCP threaded server started ...')
   while True:
     sckt, addr = s.accept()
-    ip, port = str(addr[0]), str(addr[1]) 
-    print("New client connected from ... " + str(ip) + ":" + str(port))
+    print("New client connected from ... " + str(addr[0]) + ":" + str(addr[1]))
     try:
       Thread(target=handle_incoming_msg, args=(sckt,addr,)).start()
     except:
